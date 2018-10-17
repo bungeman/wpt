@@ -1,5 +1,5 @@
 'use strict';
-function test_interpolation(settings, expectations) {
+function test_interpolation(settings, expectations, test_name_prefix) {
   // Returns a timing function that at 0.5 evaluates to progress.
   function timingFunction(progress) {
     if (progress === 0)
@@ -21,7 +21,6 @@ function test_interpolation(settings, expectations) {
     var animationId = 'anim' + i;
     var targetId = 'target' + i;
     var referenceId = 'reference' + i;
-
     test(function(){
       assert_true(CSS.supports(settings.property, expectation), 'Value "' + expectation + '" is supported by ' + settings.property);
 
@@ -49,11 +48,13 @@ function test_interpolation(settings, expectations) {
       reference.style = '';
 
       assert_equals(getComputedStyle(target)[settings.property], getComputedStyle(reference)[settings.property]);
-    }, 'Animation between "' + settings.from + '" and "' + settings.to + '" at progress ' + progress);
+    }, (test_name_prefix ? test_name_prefix : "") +
+       'Animation between "' + settings.from + '" and "' + settings.to +
+       '" at progress ' + progress);
   }
 }
 
-function test_no_interpolation(settings) {
+function test_no_interpolation(settings, test_name_prefix) {
   var expectatFrom = [-1, 0, 0.125].map(function (progress) {
     return {at: progress, expect: settings.from};
   });
@@ -61,5 +62,5 @@ function test_no_interpolation(settings) {
     return {at: progress, expect: settings.to};
   });
 
-  test_interpolation(settings, expectatFrom.concat(expectatTo));
+  test_interpolation(settings, expectatFrom.concat(expectatTo), test_name_prefix);
 }
